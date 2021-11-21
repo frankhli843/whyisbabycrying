@@ -1,4 +1,4 @@
-import { brain } from 'brain.js';
+import * as brain from './brain-browser.min.js'
 
 class BigBrian {
     constructor(){
@@ -8,6 +8,7 @@ class BigBrian {
     defaultErrorHandler = (e) => {
         console.error(e);
     }
+    
     // data: []{inpuit: any, output: any}
     async train(data, callback, options = {}, errorHandler = this.defaultErrorHandler){
         return this.brain.trainAsync(data, options).then(callback).catch(errorHandler);

@@ -3,14 +3,14 @@ import './App.css';
 import { useState, useRef } from 'react';
 import { recordAudio } from './record'
 import SelectCryReason from './selectCryReason'
-// import BigBrain from './bigBrain'
+import BigBrain from './bigBrain'
 
 const pages = {
   home: "home",
   cryReason: "cryReason"
 }
 
-// const brain = new BigBrain();
+const brain = new BigBrain();
 const trainingData = [];
 function App() {
   const [page, setPage] = useState(pages.home);
@@ -25,10 +25,10 @@ function App() {
         (audioBuffer) => {
           const audioArray = [...audioBuffer.getChannelData(0)];
           trainingData.push({input: audioArray, output: "something"});
-          // brain.trainingData(trainingData, () => {
-          //   const output = brain.run('input');
-          //   console.log(output);
-          // })
+          brain.trainingData(trainingData, () => {
+            const output = brain.run('input');
+            console.log(output);
+          })
         }, 
         (err) => console.error(err)
       );
