@@ -1,9 +1,40 @@
 import logo from './logo.svg';
 import './App.css';
-
+import { useState, useRef } from 'react';
 import { recordAudio } from './record'
+import SelectCryReason from './selectCryReason'
+// import BigBrain from './bigBrain'
 
+const pages = {
+  home: "home",
+  cryReason: "cryReason"
+}
+
+// const brain = new BigBrain();
+const trainingData = [];
 function App() {
+  const [page, setPage] = useState(pages.home);
+  const [recordState, setRecordState] = useState(false);
+  const audioRef = useRef(undefined);
+
+  const trainBrain = (output) => {
+    audioRef.current.arrayBuffer().then(arrayBuffer => {
+      const baseAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      baseAudioContext.decodeAudioData(
+        arrayBuffer, 
+        (audioBuffer) => {
+          const audioArray = [...audioBuffer.getChannelData(0)];
+          trainingData.push({input: audioArray, output: "something"});
+          // brain.trainingData(trainingData, () => {
+          //   const output = brain.run('input');
+          //   console.log(output);
+          // })
+        }, 
+        (err) => console.error(err)
+      );
+    })
+  }
+  
   return (
     <div className="App">
       <header className="App-header">
@@ -20,20 +51,17 @@ function App() {
           Learn React
         </a>
         <button onClick={() => {
+          setRecordState(!recordState);
           recordAudio(5000).then(audioChunks => {
             const audioBlob = new Blob(audioChunks);
             const audioUrl = URL.createObjectURL(audioBlob);
             const audio = new Audio(audioUrl);
-            audio.play()
-
-            audioBlob.arrayBuffer().then(arrayBuffer => {
-              baseAudioContext.decodeAudioData(arrayBuffer, (...data) => {
-                console.log()
-              }, (err) => console.error(err));
-            })
-
+            audioRef.current = audioBlob;
+            setPage(page.cryReason);
           })
-        }}>Record Audio Clip</button> 
+        }}>{ recordState === false ? "Record Audio Clip" : "Stop Recording" }</button> 
+  
+        { page === pages.cryReason && <SelectCryReason trainBrain = {trainBrain}/>}
       </header>
     </div>
   );

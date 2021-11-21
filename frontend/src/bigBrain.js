@@ -1,22 +1,22 @@
-// creating a network
-const context = require('brain');
-
+import { brain } from 'brain.js';
 
 class BigBrian {
     constructor(){
-        const brain = new brain.NeuralNetwork();
+        this.brain = new brain.NeuralNetwork();
     }
 
     defaultErrorHandler = (e) => {
         console.error(e);
     }
-
-    async train(callback, data, options = {}, errorHandler = defaultErrorHandler){
-        return brain.trainAsync(data, options).then(callback).catch(errorHandler);
+    // data: []{inpuit: any, output: any}
+    async train(data, callback, options = {}, errorHandler = this.defaultErrorHandler){
+        return this.brain.trainAsync(data, options).then(callback).catch(errorHandler);
     }
 
     // brain.run('something') => output
-    brain() {
-        return this.brain;
+    run(input) {
+        return this.brain.run(input);
     }
 }
+
+export default BigBrian;
